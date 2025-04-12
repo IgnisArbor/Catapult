@@ -1,72 +1,40 @@
-/* Cyberpunk theme styling */
+/* Load your custom font (ensure Salahuddin.otf is in the same folder or update the path) */
+@font-face {
+  font-family: 'Salahuddin';
+  src: url('Salahuddin.otf') format('opentype');
+}
+
 body {
-  background-color: #0d0d0d;
-  color: #f0f0f0;
-  font-family: 'Courier New', monospace;
+  background-color: #1a1a1a; /* dark background for a digital, AI-inspired feel */
+  color: #00FF00;            /* bright green text, reminiscent of old terminals */
+  font-family: 'Salahuddin', monospace;  /* use the custom font, fallback to monospace */
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
-  min-height: 100vh;
+  align-items: center;
+  height: 100vh;
   margin: 0;
-  text-align: center;
+  padding: 20px;
 }
 
-h1 {
-  font-size: 3rem;
-  color: #00ffff;
-  text-shadow: 0 0 10px #00ffff;
-  margin: 0.2em;
-}
-
-h2 {
-  font-size: 2rem;
-  color: #ff00ff;
-  text-shadow: 0 0 8px #ff00ff;
-  margin-bottom: 0.5em;
-}
-
-.instructions {
+#aiMessage {
   font-size: 1.2rem;
-  margin: 1em;
-  max-width: 80%;
+  white-space: pre;  /* preserve line breaks */
+  margin-bottom: 30px;
 }
 
-canvas {
-  background: #111;
-  border: 2px solid #00ffff;
-  box-shadow: 0 0 20px #00ffff;
-  margin: 1em;
-}
-
-.answer-section {
-  margin: 1em;
-}
-
-input[type="text"] {
-  padding: 10px;
+#uncaptchaButton {
+  padding: 15px 30px;
   font-size: 1.2rem;
-  width: 60px;
-  text-align: center;
+  font-family: 'Salahuddin', monospace;
   border: none;
-  border-radius: 5px;
-  box-shadow: 0 0 8px #ff00ff;
-  background-color: #222;
-  color: #f0f0f0;
-}
-
-button {
-  padding: 10px 20px;
-  font-size: 1.2rem;
-  border: none;
-  border-radius: 5px;
-  background-color: #00ffff;
-  color: #0d0d0d;
   cursor: pointer;
-  box-shadow: 0 0 8px #ff00ff;
-  margin-left: 10px;
+  background: linear-gradient(45deg, #ff6347, #3cb371, #2e8b57);
+  color: #ffffff;
+  border-radius: 5px;
+  transition: background 0.3s ease;
 }
 
-button:hover {
-  background-color: #00cccc;
+#uncaptchaButton:hover {
+  background: linear-gradient(45deg, #ff4500, #2e8b57, #3cb371);
 }
