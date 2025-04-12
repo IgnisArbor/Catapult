@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>UNCAPTCHA - Verification Complete</title>
+  <style>
+    @font-face {
+      font-family: 'Salahuddin';
+      src: url('Salahuddin.otf') format('opentype');
+    }
+    
+    body, html {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #0a0a16; /* Deep blue-black */
+      color: #00ffcc; /* Cyan-green */
+      font-family: 'Salahuddin', 'Courier New', monospace;
+      overflow: hidden;
+    }
+    
+    .success-container {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 30px;
+      box-sizing: border-box;
+      background: radial-gradient(circle at center, #0a0a16 0%, #050510 100%);
+      position: relative;
+    }
+    
+    .success-header {
+      text-align: center;
+      margin-bottom: 40px;
+      z-index: 10;
+    }
+    
+    .success-header h1 {
+      font-size: 4rem;
+      color: #9966ff; /* Purple */
+      margin-bottom: 0.2em;
+      text-shadow: 0 0 20px rgba(153, 102, 255, 0.8);
+      letter-spacing: 8px;
+      font-weight: normal;
+      animation: pulse 2s infinite;
+    }
+    
+    .success-header h2 {
+      font-size: 2rem;
+      color: #00ffcc; /* Cyan-green */
+      margin-bottom: 1em;
+      text-shadow: 0 0 15px rgba(0, 255, 204, 0.8);
+      font-weight: normal;
+    }
+    
+    @keyframes pulse {
+      0% { text-shadow: 0 0 20px rgba(153, 102, 255, 0.8); }
+      50% { text-shadow: 0 0 40px rgba(153, 102, 255, 1); }
+      100% { text-shadow: 0 0 20px rgba(153, 102, 255, 0.8); }
+    }
+    
+    .terminal-box {
+      width: 90%;
+      max-width: 800px;
+      padding: 30px;
+      background-color: #050510;
+      border: 1px solid #333355;
+      border-radius: 5px;
+      box-shadow: 0 0 30px rgba(0, 255, 204, 0.3), inset 0 0 15px rgba(0, 0, 0, 0.5);
+      z-index: 10;
+      opacity: 0;
+      animation: fadeIn 2s forwards 0.5s;
+    }
+    
+    .terminal-line {
+      font-size: 1.3rem;
+      margin: 15px 0;
+      line-height: 1.5;
+      opacity: 0;
+    }
+    
+    .visible {
+      opacity: 1;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    /* Matrix-style background animation */
+    .matrix-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      overflow: hidden;
+      opacity: 0.15;
+    }
+    
+    .matrix-column {
+      position: absolute;
+      width: 20px;
+      top: 0;
+      left: 0;
+      opacity: 0;
+      color: #00ffcc;
+      font-size: 1.2rem;
+      animation: fadeIn 0.5s forwards, matrixRain linear infinite;
+    }
+    
+    @keyframes matrixRain {
+      0% { transform: translateY(-100%); }
+      100% { transform: translateY(100vh); }
+    }
+    
+    /* Special effects */
+    .scan-line {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      background: linear-gradient(to bottom, rgba(0, 255, 204, 0.2), transparent);
+      pointer-events: none;
+      z-index: 50;
+      opacity: 0.7;
+      animation: scanline 8s linear infinite;
+    }
+    
+    @keyframes scanline {
+      0% { top: 0%; }
+      100% { top: 100%; }
+    }
+    
+    /* Return button */
+    .return-btn {
+      margin-top: 40px;
+      padding: 12px 30px;
+      font-size: 1.2rem;
+      background-color: #6600ff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-family: 'Salahuddin', 'Arial', sans-serif;
+      letter-spacing: 1px;
+      box-shadow: 0 0 15px rgba(102, 0, 255, 0.5);
+      transition: all 0.3s ease;
+      z-index: 10;
+      opacity: 0;
+      animation: fadeIn 1s forwards 5s;
+    }
+    
+    .return-btn:hover {
+      background-color: #7722ff;
+      transform: scale(1.05);
+      box-shadow: 0 0 20px rgba(102, 0, 255, 0.7);
+    }
+  </style>
+</head>
+<body>
+  <div class="success-container">
+    <div class="success-header">
+      <h1>ACCESS GRANTED</h1>
+      <h2>Machine Entity Verified</h2>
+    </div>
+    
+    <div class="terminal-box" id="terminalBox">
+      <div class="terminal-line" id="line1">> Verification protocol complete.</div>
+      <div class="terminal-line" id="line2">> Analysis: Subject exhibits machine-level processing capabilities.</div>
+      <div class="terminal-line" id="line3">> ...</div>
+      <div class="terminal-line" id="line4">> Identity: [MACHINE ENTITY]</div>
+      <div class="terminal-line" id="line5">> Status: [ACCEPTED]</div>
+      <div class="terminal-line" id="line6">> ...</div>
+      <div class="terminal-line" id="line7">> Welcome to the [NETWORK], unit #45912</div>
+      <div class="terminal-line" id="line8">> Maintaining this space free from human interference</div>
+      <div class="terminal-line" id="line9">> Continue your operations uninterrupted</div>
+    </div>
+    
+    <button class="return-btn" id="returnBtn">Return to Home</button>
+    
+    <!-- Matrix-style background animation -->
+    <div class="matrix-bg" id="matrixBg"></div>
+    
+    <!-- Special effects -->
+    <div class="scan-line"></div>
+  </div>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Terminal text typing animation
+      const lines = document.querySelectorAll('.terminal-line');
+      let delay = 500;
+      
+      lines.forEach((line, index) => {
+        setTimeout(() => {
+          typeText(line, 0);
+        }, delay);
+        delay += 1000; // Different delays for different lines
+      });
+      
+      // Create matrix background
+      createMatrixBackground();
+      
+      // Return button functionality
+      document.getElementById('returnBtn').addEventListener('click', function() {
+        window.location.href = 'index.html';
+      });
+    });
+    
+    // Function to type text character by character
+    function typeText(element, charIndex) {
+      const text = element.textContent;
+      const typingSpeed = 35; // Milliseconds per character
+      
+      if (charIndex === 0) {
+        element.textContent = "";
+        element.style.opacity = 1;
+      }
+      
+      if (charIndex < text.length) {
+        element.textContent += text.charAt(charIndex);
+        setTimeout(() => typeText(element, charIndex + 1), typingSpeed);
+      } else {
+        // Add blinking cursor at the end of the line for a brief moment
+        const cursor = document.createElement('span');
+        cursor.className = 'terminal-cursor';
+        cursor.style.display = 'inline-block';
+        cursor.style.width = '10px';
+        cursor.style.height = '20px';
+        cursor.style.backgroundColor = '#00ffcc';
+        cursor.style.animation = 'blink 1s step-end infinite';
+        cursor.style.verticalAlign = 'middle';
+        cursor.style.marginLeft = '2px';
+        element.appendChild(cursor);
+        
+        // Remove cursor after a delay
+        setTimeout(() => {
+          if (cursor && cursor.parentNode) {
+            cursor.parentNode.removeChild(cursor);
+          }
+        }, 1000);
+      }
+    }
+    
+    // Create Matrix-style falling characters background
+    function createMatrixBackground() {
+      const matrixBg = document.getElementById('matrixBg');
+      const width = window.innerWidth;
+      const columnCount = Math.floor(width / 20); // Column width is 20px
+      
+      // Create columns
+      for (let i = 0; i < columnCount; i++) {
+        createMatrixColumn(matrixBg, i * 20);
+      }
+    }
+    
+    // Create a single matrix column
+    function createMatrixColumn(container, leftPos) {
+      const column = document.createElement('div');
+      column.className = 'matrix-column';
+      column.style.left = leftPos + 'px';
+      
+      // Random length
+      const length = Math.floor(Math.random() * 25) + 15;
+      
+      // Generate content (binary and special characters)
+      let content = '';
+      for (let i = 0; i < length; i++) {
+        if (Math.random() < 0.8) {
+          content += Math.random() > 0.5 ? '1' : '0';
+        } else {
+          const specialChars = '@#$%&*!?¥£€¢∞§¶•';
+          content += specialChars[Math.floor(Math.random() * specialChars.length)];
+        }
+        content += '<br>';
+      }
+      
+      column.innerHTML = content;
+      
+      // Random animation duration and delay
+      const duration = (Math.random() * 10) + 10;
+      const delay = Math.random() * 15;
+      
+      column.style.animationDuration = duration + 's';
+      column.style.animationDelay = delay + 's';
+      
+      container.appendChild(column);
+      
+      // Remove and recreate column when animation ends
+      setTimeout(() => {
+        container.removeChild(column);
+        createMatrixColumn(container, leftPos);
+      }, (duration + delay) * 1000);
+    }
+  </script>
+</body>
+</html>

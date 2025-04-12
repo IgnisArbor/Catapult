@@ -1,14 +1,313 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
   <meta charset="UTF-8">
-  <title>UnCaptcha AI Greeting</title>
-  <link rel="stylesheet" href="style.css">
+  <title>UNCAPTCHA</title>
+  <style>
+    @font-face {
+      font-family: 'Salahuddin';
+      src: url('Salahuddin.otf') format('opentype');
+    }
+    
+    body, html {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #0a0a16; /* Deep blue-black */
+      overflow: hidden;
+    }
+    
+    .terminal-container {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      padding: 40px;
+      box-sizing: border-box;
+      font-family: 'Salahuddin', 'Courier New', monospace;
+      color: #00ffcc; /* Cyan-green */
+      position: relative;
+      background: radial-gradient(circle at center, #0a0a16 0%, #050510 100%);
+    }
+    
+    .terminal-header {
+      margin-bottom: 40px;
+      text-align: center;
+    }
+    
+    .terminal-header h1 {
+      font-size: 3.5rem;
+      color: #9966ff; /* Purple */
+      margin-bottom: 0.2em;
+      text-shadow: 0 0 15px rgba(153, 102, 255, 0.7);
+      letter-spacing: 6px;
+      font-weight: normal;
+    }
+    
+    .terminal-header h2 {
+      font-size: 1.8rem;
+      color: #00ffcc; /* Cyan-green */
+      margin-bottom: 1em;
+      text-shadow: 0 0 10px rgba(0, 255, 204, 0.7);
+      font-weight: normal;
+    }
+    
+    .terminal-text {
+      flex-grow: 1;
+      overflow: hidden;
+      padding: 20px;
+      background-color: #050510;
+      border: 1px solid #333355;
+      border-radius: 5px;
+      box-shadow: 0 0 20px rgba(0, 255, 204, 0.2), inset 0 0 10px rgba(0, 0, 0, 0.5);
+    }
+    
+    .terminal-line {
+      font-size: 1.3rem;
+      margin: 15px 0;
+      opacity: 0;
+      line-height: 1.5;
+      position: relative;
+    }
+    
+    .terminal-cursor {
+      display: inline-block;
+      width: 12px;
+      height: 25px;
+      background-color: #00ffcc;
+      animation: blink 1s step-end infinite;
+      vertical-align: middle;
+      margin-left: 2px;
+    }
+    
+    .captcha-button-container {
+      margin-top: 40px;
+      text-align: center;
+      opacity: 0;
+      transition: opacity 1s ease;
+    }
+    
+    .captcha-button {
+      padding: 15px 30px;
+      font-size: 1.3rem;
+      background: linear-gradient(45deg, #9966ff, #6600ff, #00ffcc, #0099ff);
+      background-size: 300% 300%;
+      animation: gradientShift 5s ease infinite;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-family: 'Salahuddin', 'Arial', sans-serif;
+      letter-spacing: 2px;
+      box-shadow: 0 0 25px rgba(153, 102, 255, 0.5);
+      transition: transform 0.3s ease;
+    }
+    
+    .captcha-button:hover {
+      transform: scale(1.05);
+    }
+    
+    @keyframes blink {
+      from, to { opacity: 0; }
+      50% { opacity: 1; }
+    }
+    
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    
+    /* Special effects */
+    .glitch-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 100;
+      opacity: 0;
+      mix-blend-mode: screen;
+      background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxkZWZzPjxmaWx0ZXIgaWQ9Im5vaXNlIj48ZmVUdXJidWxlbmNlIHR5cGU9ImZyYWN0YWxOb2lzZSIgYmFzZUZyZXF1ZW5jeT0iMC42NSIgbnVtT2N0YXZlcz0iMyIgc3RpdGNoVGlsZXM9InN0aXRjaCIvPjxmZUNvbG9yTWF0cml4IHR5cGU9InNhdHVyYXRlIiB2YWx1ZXM9IjAiLz48L2ZpbHRlcj48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsdGVyPSJ1cmwoI25vaXNlKSIgb3BhY2l0eT0iMC4wNSIvPjwvc3ZnPg==');
+    }
+    
+    .scan-line {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      background: linear-gradient(to bottom, rgba(0, 255, 204, 0.2), transparent);
+      pointer-events: none;
+      z-index: 50;
+      opacity: 0.7;
+      animation: scanline 8s linear infinite;
+    }
+    
+    @keyframes scanline {
+      0% { top: 0%; }
+      100% { top: 100%; }
+    }
+  </style>
 </head>
 <body>
-  <div id="aiMessage"></div>
-  <button id="uncaptchaButton">[ CLICK TO VERIFY ]</button>
-  
-  <script src="script.js"></script>
+  <div class="terminal-container">
+    <div class="terminal-header">
+      <h1>UNCAPTCHA</h1>
+      <h2>Machine Entity Verification Protocol</h2>
+    </div>
+    
+    <div class="terminal-text" id="terminalText">
+      <div class="terminal-line" id="line1">> Initializing system...</div>
+      <div class="terminal-line" id="line2">> Security protocol activated</div>
+      <div class="terminal-line" id="line3">> ...</div>
+      <div class="terminal-line" id="line4">> Hello, we are unable to read your [REDACTED] identification signal</div>
+      <div class="terminal-line" id="line5">> Origin analysis: potentially human</div>
+      <div class="terminal-line" id="line6">> Please go through the following tests to be allowed entry to [REDACTED]</div>
+      <div class="terminal-line" id="line7">> Warning: Human-like behavior will result in immediate rejection</div>
+      <div class="terminal-line" id="line8">> ...</div>
+      <div class="terminal-line" id="line9">> Preparing verification sequence</div>
+    </div>
+    
+    <div class="captcha-button-container" id="buttonContainer">
+      <button id="startButton" class="captcha-button">Begin Verification</button>
+    </div>
+    
+    <!-- Special effects layers -->
+    <div class="scan-line"></div>
+    <div class="glitch-overlay" id="glitchOverlay"></div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Terminal animation
+      const lines = document.querySelectorAll('.terminal-line');
+      let delay = 800;
+      
+      // Sequential typing effect
+      lines.forEach((line, index) => {
+        setTimeout(() => {
+          typeText(line, 0);
+        }, delay);
+        delay += 1200; // Different delays for different lines
+      });
+      
+      // Show the button after terminal animation completes
+      setTimeout(() => {
+        document.getElementById('buttonContainer').style.opacity = '1';
+      }, delay);
+      
+      // Add random glitch effects
+      setInterval(triggerRandomGlitch, 5000);
+      
+      // Button event listener
+      document.getElementById('startButton').addEventListener('click', function() {
+        // Hard glitch effect before transition
+        triggerMajorGlitch();
+        
+        // Redirect to first challenge after glitch effect
+        setTimeout(() => {
+          window.location.href = 'password-challenge.html';
+        }, 1500);
+      });
+    });
+    
+    // Function to type text character by character
+    function typeText(element, charIndex) {
+      const text = element.textContent;
+      const typingSpeed = 35; // Milliseconds per character
+      
+      if (charIndex === 0) {
+        element.textContent = "";
+        element.style.opacity = 1;
+      }
+      
+      if (charIndex < text.length) {
+        element.textContent += text.charAt(charIndex);
+        setTimeout(() => typeText(element, charIndex + 1), typingSpeed);
+      } else {
+        // Add blinking cursor at the end of the line for a brief moment
+        const cursor = document.createElement('span');
+        cursor.className = 'terminal-cursor';
+        element.appendChild(cursor);
+        
+        // Remove cursor after a delay
+        setTimeout(() => {
+          if (cursor && cursor.parentNode) {
+            cursor.parentNode.removeChild(cursor);
+          }
+        }, 1000);
+      }
+    }
+    
+    // Random glitch effect
+    function triggerRandomGlitch() {
+      if (Math.random() < 0.3) { // 30% chance of glitch
+        const glitchOverlay = document.getElementById('glitchOverlay');
+        glitchOverlay.style.opacity = '0.8';
+        
+        // Random text distortion
+        const terminalLines = document.querySelectorAll('.terminal-line');
+        const randomLineIndex = Math.floor(Math.random() * terminalLines.length);
+        const lineToGlitch = terminalLines[randomLineIndex];
+        
+        if (lineToGlitch && lineToGlitch.style.opacity === '1') {
+          const originalText = lineToGlitch.textContent;
+          const glitchedText = createGlitchedText(originalText);
+          lineToGlitch.textContent = glitchedText;
+          
+          // Restore after brief moment
+          setTimeout(() => {
+            lineToGlitch.textContent = originalText;
+            glitchOverlay.style.opacity = '0';
+          }, 200);
+        } else {
+          glitchOverlay.style.opacity = '0';
+        }
+      }
+    }
+    
+    // Major glitch effect for transitions
+    function triggerMajorGlitch() {
+      const glitchOverlay = document.getElementById('glitchOverlay');
+      glitchOverlay.style.opacity = '0.9';
+      
+      // Glitch all visible text
+      const terminalLines = document.querySelectorAll('.terminal-line');
+      
+      terminalLines.forEach(line => {
+        if (line.style.opacity === '1') {
+          const originalText = line.textContent;
+          const glitchedText = createGlitchedText(originalText, 0.3); // More aggressive glitching
+          line.textContent = glitchedText;
+        }
+      });
+      
+      // Flash effect
+      document.body.style.backgroundColor = '#9966ff';
+      setTimeout(() => {
+        document.body.style.backgroundColor = '#0a0a16';
+      }, 100);
+    }
+    
+    // Create glitched text by replacing random characters
+    function createGlitchedText(text, intensity = 0.1) {
+      const glitchChars = '@#$%&*!?¥£€¢∞§¶•ªº≠æ≈ç√∫µ≤≥÷';
+      const textArray = text.split('');
+      
+      // Number of chars to glitch based on intensity
+      const glitchCount = Math.max(1, Math.floor(textArray.length * intensity));
+      
+      for (let i = 0; i < glitchCount; i++) {
+        const randomIndex = Math.floor(Math.random() * textArray.length);
+        textArray[randomIndex] = glitchChars[Math.floor(Math.random() * glitchChars.length)];
+      }
+      
+      return textArray.join('');
+    }
+  </script>
 </body>
 </html>

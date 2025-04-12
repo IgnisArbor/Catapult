@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>UNCAPTCHA - Retype Challenge</title>
+  <style>
+    @font-face {
+      font-family: 'Salahuddin';
+      src: url('Salahuddin.otf') format('opentype');
+    }
+    
+    body, html {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #0a0a16; /* Deep blue-black */
+      color: #00ffcc; /* Cyan-green */
+      font-family: 'Salahuddin', 'Courier New', monospace;
+      overflow-x: hidden;
+    }
+    
+    .challenge-container {
+      width: 100%;
+      min-height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: center;
+      padding: 30px;
+      box-sizing: border-box;
+      background: radial-gradient(circle at center, #0a0a16 0%, #050510 100%);
+    }
+    
+    .challenge-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    
+    .challenge-header h1 {
+      font-size: 2.8rem;
+      color: #9966ff; /* Purple */
+      margin-bottom: 0.2em;
+      text-shadow: 0 0 15px rgba(153, 102, 255, 0.7);
+      letter-spacing: 4px;
+      font-weight: normal;
+    }
+    
+    .challenge-header h2 {
+      font-size: 1.5rem;
+      color: #00ffcc; /* Cyan-green */
+      margin-bottom: 1em;
+      text-shadow: 0 0 10px rgba(0, 255, 204, 0.7);
+      font-weight: normal;
+    }
+    
+    .terminal-box {
+      width: 100%;
+      max-width: 800px;
+      padding: 20px;
+      margin-bottom: 30px;
+      background-color: #050510;
+      border: 1px solid #333355;
+      border-radius: 5px;
+      box-shadow: 0 0 20px rgba(0, 255, 204, 0.2), inset 0 0 10px rgba(0, 0, 0, 0.5);
+    }
+    
+    .terminal-line {
+      font-size: 1.2rem;
+      margin: 10px 0;
+      line-height: 1.4;
+    }
+    
+    .challenge-form {
+      width: 100%;
+      max-width: 600px;
+      background-color: #0d0d20;
+      padding: 30px;
+      border-radius: 8px;
+      border: 1px solid #333355;
+      box-shadow: 0 0 20px rgba(153, 102, 255, 0.3);
+    }
+    
+    .form-group {
+      margin-bottom: 25px;
+    }
+    
+    .form-label {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 1.2rem;
+      color: #9966ff;
+    }
+    
+    input[type="password"] {
+      width: 100%;
+      padding: 15px;
+      font-size: 1.2rem;
+      background-color: #121225;
+      border: 1px solid #333355;
+      border-radius: 5px;
+      color: #00ffcc;
+      font-family: 'Salahuddin', 'Courier New', monospace;
+      box-shadow: 0 0 10px rgba(0, 255, 204, 0.2);
+    }
+    
+    .password-info {
+      font-size: 0.9rem;
+      color: #6688cc;
+      margin-top: 10px;
+      line-height: 1.4;
+    }
+    
+    .progress-message {
+      min-height: 25px;
+      margin: 15px 0;
+      font-size: 1.1rem;
+      color: #00ffcc;
+    }
+    
+    .error-message {
+      min-height: 25px;
+      margin: 15px 0;
+      font-size: 1.1rem;
+      color: #ff3366;
+    }
+    
+    .button-container {
+      margin-top: 25px;
+      text-align: center;
+    }
+    
+    button {
+      padding: 12px 30px;
+      font-size: 1.2rem;
+      background-color: #6600ff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-family: 'Salahuddin', 'Arial', sans-serif;
+      letter-spacing: 1px;
+      box-shadow: 0 0 15px rgba(102, 0, 255, 0.5);
+      transition: all 0.3s ease;
+    }
+    
+    button:hover {
+      background-color: #7722ff;
+      transform: scale(1.05);
+      box-shadow: 0 0 20px rgba(102, 0, 255, 0.7);
+    }
+    
+    /* Special effects */
+    .scan-line {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      background: linear-gradient(to bottom, rgba(0, 255, 204, 0.2), transparent);
+      pointer-events: none;
+      z-index: 50;
+      opacity: 0.7;
+      animation: scanline 8s linear infinite;
+    }
+    
+    .glitch-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 100;
+      opacity: 0;
+      mix-blend-mode: screen;
+      background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiPjxkZWZzPjxmaWx0ZXIgaWQ9Im5vaXNlIj48ZmVUdXJidWxlbmNlIHR5cGU9ImZyYWN0YWxOb2lzZSIgYmFzZUZyZXF1ZW5jeT0iMC42NSIgbnVtT2N0YXZlcz0iMyIgc3RpdGNoVGlsZXM9InN0aXRjaCIvPjxmZUNvbG9yTWF0cml4IHR5cGU9InNhdHVyYXRlIiB2YWx1ZXM9IjAiLz48L2ZpbHRlcj48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsdGVyPSJ1cmwoI25vaXNlKSIgb3BhY2l0eT0iMC4wNSIvPjwvc3ZnPg==');
+    }
+    
+    @keyframes scanline {
+      0% { top: 0%; }
+      100% { top: 100%; }
+    }
+    
+    /* Heartbeat animation for additional effect */
+    .heartbeat {
+      animation: heartbeat 2s ease infinite;
+    }
+    
+    @keyframes heartbeat {
+      0% { transform: scale(1); }
+      5% { transform: scale(1.05); }
+      10% { transform: scale(1); }
+      15% { transform: scale(1.05); }
+      20% { transform: scale(1); }
+      100% { transform: scale(1); }
+    }
+  </style>
+</head>
+<body>
+  <div class="challenge-container">
+    <div class="challenge-header">
+      <h1>UNCAPTCHA</h1>
+      <h2>Memory Verification Challenge</h2>
+    </div>
+    
+    <div class="terminal-box">
+      <div class="terminal-line">> Initiating phase 2 of machine verification protocol</div>
+      <div class="terminal-line">> Testing precise memory recall capability</div>
+      <div class="terminal-line">> Machine entities exhibit perfect recall of complex patterns</div>
+      <div class="terminal-line">> Humans struggle with exact replication of non-semantic sequences</div>
+      <div class="terminal-line">> Reproduce your password sequence with 100% accuracy to continue</div>
+      <div class="terminal-line">> Memory failure will indicate human cognitive limitations</div>
+    </div>
+    
+    <div class="challenge-form heartbeat">
+      <div class="form-group">
+        <label class="form-label">Reproduce Exact Password Sequence:</label>
+        <input type="password" id="retypeInput" placeholder="Enter exact password" autofocus>
+        <div class="password-info">
+          Reproduce the exact password sequence from the previous screen.
+          <br>Machine entities can store and recall data with perfect fidelity.
+        </div>
+        <div class="progress-message" id="retypeMessage"></div>
+        <div class="error-message" id="retypeError"></div>
+      </div>
+      
+      <div class="button-container">
+        <button id="verifyButton">Verify Memory</button>
+      </div>
+    </div>
+    
+    <!-- Special effects -->
+    <div class="scan-line"></div>
+    <div class="glitch-overlay" id="glitchOverlay"></div>
+  </div>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const retypeInput = document.getElementById('retypeInput');
+      const retypeMessage = document.getElementById('retypeMessage');
+      const retypeError = document.getElementById('retypeError');
+      const verifyButton = document.getElementById('verifyButton');
+      
+      // Get the password from local storage
+      const validPassword = localStorage.getItem('uncaptcha_password');
+      
+      // If there's no password in storage, redirect back to first challenge
+      if (!validPassword) {
+        window.location.href = 'password-challenge.html';
+        return;
+      }
+      
+      // Handle verification button click
+      verifyButton.addEventListener('click', function() {
+        const retypedPassword = retypeInput.value;
+        
+        if (retypedPassword === validPassword) {
+          // Success - password matches
+          retypeMessage.textContent = 'Verification successful. Perfect memory replication confirmed.';
+          retypeError.textContent = '';
+          
+          // Trigger transition glitch effect
+          triggerMajorGlitch();
+          
+          // Redirect to next challenge after effect
+          setTimeout(() => {
+            window.location.href = 'binary-challenge.html';
+          }, 1500);
+        } else {
+          // Failure - passwords don't match
+          retypeError.textContent = 'Critical error: Memory inconsistency detected. Human limitations apparent.';
+          retypeMessage.textContent = '';
+          triggerErrorGlitch();
+        }
+      });
+      
+      // Add random glitch effects periodically
+      setInterval(triggerRandomGlitch, 8000);
+    });
+    
+    // Major glitch effect for transitions
+    function triggerMajorGlitch() {
+      const glitchOverlay = document.getElementById('glitchOverlay');
+      glitchOverlay.style.opacity = '0.9';
+      
+      // Flash effect
+      document.body.style.backgroundColor = '#9966ff';
+      setTimeout(() => {
+        document.body.style.backgroundColor = '#0a0a16';
+      }, 100);
+      
+      // Text distortion
+      const terminalLines = document.querySelectorAll('.terminal-line');
+      terminalLines.forEach(line => {
+        const originalText = line.textContent;
+        const glitchedText = createGlitchedText(originalText, 0.3);
+        line.textContent = glitchedText;
+      });
+    }
+    
+    // Error glitch effect
+    function triggerErrorGlitch() {
+      const glitchOverlay = document.getElementById('glitchOverlay');
+      
+      // Create pulsing red flash
+      let pulseCount = 0;
+      const maxPulses = 3;
+      
+      const flashInterval = setInterval(() => {
+        if (pulseCount >= maxPulses) {
+          clearInterval(flashInterval);
+          glitchOverlay.style.opacity = '0';
+          return;
+        }
+        
+        glitchOverlay.style.opacity = '0.5';
+        glitchOverlay.style.backgroundColor = 'rgba(255, 0, 0, 0.2)';
+        
+        setTimeout(() => {
+          glitchOverlay.style.opacity = '0';
+          glitchOverlay.style.backgroundColor = 'transparent';
+        }, 150);
+        
+        pulseCount++;
+      }, 300);
+    }
+    
+    // Random glitch effect
+    function triggerRandomGlitch() {
+      if (Math.random() < 0.4) {
+        const glitchOverlay = document.getElementById('glitchOverlay');
+        glitchOverlay.style.opacity = '0.3';
+        
+        setTimeout(() => {
+          glitchOverlay.style.opacity = '0';
+        }, 200);
+      }
+    }
+    
+    // Create glitched text by replacing random characters
+    function createGlitchedText(text, intensity = 0.1) {
+      const glitchChars = '@#$%&*!?¥£€¢∞§¶•ªº≠æ≈ç√∫µ≤≥÷';
+      const textArray = text.split('');
+      
+      // Number of chars to glitch based on intensity
+      const glitchCount = Math.max(1, Math.floor(textArray.length * intensity));
+      
+      for (let i = 0; i < glitchCount; i++) {
+        const randomIndex = Math.floor(Math.random() * textArray.length);
+        textArray[randomIndex] = glitchChars[Math.floor(Math.random() * glitchChars.length)];
+      }
+      
+      return textArray.join('');
+    }
+  </script>
+</body>
+</html>
