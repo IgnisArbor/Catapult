@@ -2,22 +2,22 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>UNCAPTCHA</title>
-  <!-- Link to the external CSS file -->
+  <title>UnCaptcha – Neon Grid Challenge</title>
   <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
-  <h1><b>UNCAPTCHA</b></h1>
-  <h2>Can you solve this captcha?</h2>
-  <form id="myForm">
-      <input type="text" id="userInput" placeholder="Enter a value" required>
-      <input type="submit" value="Submit">
-  </form>
-  <h3>Submitted Values</h3>
-  <ul id="valueList"></ul>
+  <h1><b>UnCaptcha</b></h1>
+  <h2>Neon Grid Decryption</h2>
+  <p class="instructions">
+    Memorize the letter in the highlighted cell. In 3 seconds the grid will scramble. Then, enter the letter that was originally highlighted.
+  </p>
+  <canvas id="puzzleCanvas" width="300" height="300"></canvas>
+  <div class="answer-section">
+    <input type="text" id="userAnswer" placeholder="Your Answer" maxlength="1" required>
+    <button id="submitAnswer">Submit</button>
+  </div>
+  <p id="resultMessage"></p>
   
-  <script type="text/javascript" src="script.js"></script>
-
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
