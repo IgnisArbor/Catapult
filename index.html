@@ -2,13 +2,17 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Anti-GPT CAPTCHA</title>
+  <title>UNCAPTCHA</title>
   <!-- Link to the external CSS file -->
   <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
-  <h1><b>UnCaptcha</b></h1>
+  <h1><b>UNCAPTCHA</b></h1>
   <h2>Can you solve this captcha?</h2>
+  
+  <!-- Image element for the captcha -->
+  <img id="captchaImage" alt="Captcha Image" />
+
   <form id="myForm">
       <input type="text" id="userInput" placeholder="Enter a value" required>
       <input type="submit" value="Submit">
@@ -16,8 +20,7 @@
   <h3>Submitted Values</h3>
   <ul id="valueList"></ul>
   
-  <script type="text/javascript" src="script.js"></script>
-
-  </script>
+  <!-- Link to the external JavaScript file -->
+  <script src="script.js"></script>
 </body>
 </html>
