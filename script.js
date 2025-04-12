@@ -10,20 +10,11 @@ const captchas = [
 
 // Function to randomly choose a captcha from the captchas array
 function loadRandomCaptcha() {
-  // Choose a random index
   const randomIndex = Math.floor(Math.random() * captchas.length);
-  
-  // Get the captcha object at that index
   const captcha = captchas[randomIndex];
-  
-  // Build the image path (assuming images are in a folder called "images")
   const imagePath = 'images/' + captcha.image;
-  
-  // Set the src of the captcha image element and update the expected answer
   const captchaImageElement = document.getElementById('captchaImage');
   captchaImageElement.src = imagePath;
-  
-  // Update the current captcha answer
   currentCaptchaAnswer = captcha.answer.trim();
   console.log('Loaded captcha answer:', currentCaptchaAnswer);
 }
@@ -31,7 +22,7 @@ function loadRandomCaptcha() {
 // Initially load a captcha when the page loads
 window.addEventListener('DOMContentLoaded', loadRandomCaptcha);
 
-// Reference to the form, input, list, and result message elements
+// Get references to the form, input, value list, and result elements
 const form = document.getElementById('myForm');
 const inputField = document.getElementById('userInput');
 const valueList = document.getElementById('valueList');
@@ -40,33 +31,29 @@ const resultMessage = document.getElementById('result');
 // Array to store submitted values
 const submittedValues = [];
 
-// Listen for the form's submit event
+// Listen for form submission events
 form.addEventListener('submit', function(event) {
-  // Prevent form from refreshing the page
   event.preventDefault();
-
-  // Get the user's input and trim whitespace
   const userInput = inputField.value.trim();
-
-  // Check whether the input matches the captcha answer
+  
+  // Check if the user's input matches the captcha answer
   if (userInput === currentCaptchaAnswer) {
     resultMessage.textContent = "Correct! Captcha solved.";
-    resultMessage.style.color = "#3cb371"; // green
+    resultMessage.style.color = "#3cb371"; // Green color for success
+    submittedValues.push(userInput);
+    updateValueList();
+    
+    // Optionally, you can perform any other action on success here...
+    
+    // Load a new captcha for the next attempt (if needed)
+    loadRandomCaptcha();
   } else {
-    resultMessage.textContent = "Incorrect. Try again.";
-    resultMessage.style.color = "#ff6347"; // red
+    // If the answer is incorrect, redirect the user to "wrong.html"
+    window.location.href = "index2.html";
   }
-
-  // Store the input value (for logging or further manipulation)
-  submittedValues.push(userInput);
-  console.log('Submitted values:', submittedValues);
-  updateValueList();
-
+  
   // Clear the input field for the next attempt
   inputField.value = '';
-
-  // Load a new captcha on every submit
-  loadRandomCaptcha();
 });
 
 // Function to update the list of submitted values
